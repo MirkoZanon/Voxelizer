@@ -1,0 +1,32 @@
+,duration_frames,duration_seconds,duration_volumes,name,group,description
+0,540,9,9,b,shape,"blank, shape doesn't apply"
+1,60,1,1,cr,shape,constant radius
+2,1620,27,27,b,shape,"blank, shape doesn't apply"
+3,60,1,1,cr,shape,constant radius
+4,1260,21,21,b,shape,"blank, shape doesn't apply"
+5,60,1,1,cr,shape,constant radius
+6,900,15,15,b,shape,"blank, shape doesn't apply"
+7,60,1,1,cr,shape,constant radius
+8,1260,21,21,b,shape,"blank, shape doesn't apply"
+9,60,1,1,cr,shape,constant radius
+10,1620,27,27,b,shape,"blank, shape doesn't apply"
+11,60,1,1,ta,shape,equivalent total area
+12,900,15,15,b,shape,"blank, shape doesn't apply"
+13,60,1,1,ta,shape,equivalent total area
+14,1260,21,21,b,shape,"blank, shape doesn't apply"
+15,60,1,1,ta,shape,equivalent total area
+16,1260,21,21,b,shape,"blank, shape doesn't apply"
+17,60,1,1,ta,shape,equivalent total area
+18,900,15,15,b,shape,"blank, shape doesn't apply"
+19,60,1,1,ta,shape,equivalent total area
+20,1620,27,27,b,shape,"blank, shape doesn't apply"
+21,60,1,1,tp,shape,equivalent total perimeter
+22,1620,27,27,b,shape,"blank, shape doesn't apply"
+23,60,1,1,tp,shape,equivalent total perimeter
+24,900,15,15,b,shape,"blank, shape doesn't apply"
+25,60,1,1,tp,shape,equivalent total perimeter
+26,1620,27,27,b,shape,"blank, shape doesn't apply"
+27,60,1,1,tp,shape,equivalent total perimeter
+28,1260,21,21,b,shape,"blank, shape doesn't apply"
+29,60,1,1,tp,shape,equivalent total perimeter
+30,1080,18,18,b,shape,"blank, shape doesn't apply"

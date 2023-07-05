@@ -9,6 +9,7 @@ from patchify import patchify, unpatchify
 
 from typing import Union, List, Optional, Tuple, Dict, Any
 import numpy.typing as npt
+from tqdm.notebook import tqdm, trange
 
 class Voxelizer:
     
@@ -109,7 +110,7 @@ class Voxelizer:
         """
         sv_signal = {f"sv_{isv}":[] for isv in range(len(self.mask_SVs))}
         chuncks = experiment.batch_volumes(batch_size, full_only=True, overlap=0)
-        for chunck in chuncks:
+        for chunck in tqdm(chuncks, desc='Voxelizing chuncks'):
             data = experiment.load_volumes(chunck, verbose=False)
             #zero pad dataset
             padded_data = self._zero_pad_matrix_in_space(data)
@@ -175,19 +176,23 @@ class Voxelizer:
         Returns:
             final_cell_df: panda dataframe with avg df/f0 signals for each SV in ROI in time
         """
-        raw_array =  np.array(pd.DataFrame.from_dict(sv_signal))
-        df_array = np.zeros(raw_array.shape)
-        if raw_array.shape[0]%stim_chuncks_dim != 0:
-            print('Error: time dimention of dataset does not match stimulus chunck dimention')
-        else:
-            for cycle in range(int(raw_array.shape[0]/stim_chuncks_dim)):
-                f0 = raw_array[np.array(baseline_volumes)+cycle*stim_chuncks_dim,:].mean(axis=0)
-                df_array[cycle*stim_chuncks_dim:(cycle*stim_chuncks_dim+stim_chuncks_dim),:] = raw_array[cycle*stim_chuncks_dim:(cycle*stim_chuncks_dim+stim_chuncks_dim),:]/f0
+        df_array = self._normalize_signal(sv_signal, stim_chuncks_dim, baseline_volumes)
         final_cell_df = pd.DataFrame(df_array)
         labels = ['sv_'+str(i) for i in range(final_cell_df.shape[1])]
         for i, label in enumerate(labels):
             final_cell_df = final_cell_df.rename(columns={i:label})
         return final_cell_df
+    
+    def _normalize_signal(self, sv_signal: Dict, annotation_reg: pd.DataFrame, stim_chuncks_dim: int, baseline_volumes: List[int]) -> npt.NDArray:
+        raw_array =  np.array(pd.DataFrame.from_dict(sv_signal))
+        df_array = np.zeros(raw_array.shape)
+        if raw_array.shape[0]%stim_chuncks_dim != 0:
+            print('Error: time dimention of dataset does not match stimulus chunck dimention')
+        else:
+            for cycle in tqdm(range(int(raw_array.shape[0]/stim_chuncks_dim)), desc='Normalizing chuncks'):
+                f0 = raw_array[np.array(baseline_volumes)+cycle*stim_chuncks_dim,:].mean(axis=0)
+                df_array[cycle*stim_chuncks_dim:(cycle*stim_chuncks_dim+stim_chuncks_dim),:] = raw_array[cycle*stim_chuncks_dim:(cycle*stim_chuncks_dim+stim_chuncks_dim),:]/f0
+        return df_array
     
     def plot_SVs(self, sv_dict: Dict) -> npt.NDArray:
         """

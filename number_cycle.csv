@@ -1,0 +1,32 @@
+,duration_frames,duration_seconds,duration_volumes,name,group,description
+0,540,9,9,b,number,"blank, no dots"
+1,60,1,1,d4,number,4 dots on the screen
+2,1620,27,27,b,number,"blank, no dots"
+3,60,1,1,d3,number,3 dots on the screen
+4,1260,21,21,b,number,"blank, no dots"
+5,60,1,1,d5,number,5 dots on the screen
+6,900,15,15,b,number,"blank, no dots"
+7,60,1,1,d2,number,2 dots on the screen
+8,1260,21,21,b,number,"blank, no dots"
+9,60,1,1,d1,number,1 dot on the screen
+10,1620,27,27,b,number,"blank, no dots"
+11,60,1,1,d4,number,4 dots on the screen
+12,900,15,15,b,number,"blank, no dots"
+13,60,1,1,d2,number,2 dots on the screen
+14,1260,21,21,b,number,"blank, no dots"
+15,60,1,1,d5,number,5 dots on the screen
+16,1260,21,21,b,number,"blank, no dots"
+17,60,1,1,d3,number,3 dots on the screen
+18,900,15,15,b,number,"blank, no dots"
+19,60,1,1,d1,number,1 dot on the screen
+20,1620,27,27,b,number,"blank, no dots"
+21,60,1,1,d4,number,4 dots on the screen
+22,1620,27,27,b,number,"blank, no dots"
+23,60,1,1,d1,number,1 dot on the screen
+24,900,15,15,b,number,"blank, no dots"
+25,60,1,1,d3,number,3 dots on the screen
+26,1620,27,27,b,number,"blank, no dots"
+27,60,1,1,d2,number,2 dots on the screen
+28,1260,21,21,b,number,"blank, no dots"
+29,60,1,1,d5,number,5 dots on the screen
+30,1080,18,18,b,number,"blank, no dots"
