@@ -110,7 +110,7 @@ class Voxelizer:
         """
         sv_signal = {f"sv_{isv}":[] for isv in range(len(self.mask_SVs))}
         chuncks = experiment.batch_volumes(batch_size, full_only=True, overlap=0)
-        for chunck in tqdm(chuncks, desc='Voxelizing chuncks'):
+        for chunck in tqdm(chuncks, desc='Voxelizing chunks'):
             data = experiment.load_volumes(chunck, verbose=False)
             #zero pad dataset
             padded_data = self._zero_pad_matrix_in_space(data)
@@ -177,20 +177,22 @@ class Voxelizer:
             final_cell_df: panda dataframe with avg df/f0 signals for each SV in ROI in time
         """
         df_array = self._normalize_signal(sv_signal, stim_chuncks_dim, baseline_volumes)
-        final_cell_df = pd.DataFrame(df_array)
-        labels = ['sv_'+str(i) for i in range(final_cell_df.shape[1])]
-        for i, label in enumerate(labels):
-            final_cell_df = final_cell_df.rename(columns={i:label})
+        labels = ['sv_'+str(i) for i in range(df_array.shape[1])]
+        final_cell_df = pd.DataFrame(df_array, columns = labels)
+        # for i, label in enumerate(labels):
+        #     print(i)
+        #     final_cell_df = final_cell_df.rename(columns={i:label})
         return final_cell_df
     
-    def _normalize_signal(self, sv_signal: Dict, annotation_reg: pd.DataFrame, stim_chuncks_dim: int, baseline_volumes: List[int]) -> npt.NDArray:
+    def _normalize_signal(self, sv_signal: Dict, stim_chuncks_dim: int, baseline_volumes: List[int]) -> npt.NDArray:
         raw_array =  np.array(pd.DataFrame.from_dict(sv_signal))
         df_array = np.zeros(raw_array.shape)
         if raw_array.shape[0]%stim_chuncks_dim != 0:
             print('Error: time dimention of dataset does not match stimulus chunck dimention')
         else:
-            for cycle in tqdm(range(int(raw_array.shape[0]/stim_chuncks_dim)), desc='Normalizing chuncks'):
-                f0 = raw_array[np.array(baseline_volumes)+cycle*stim_chuncks_dim,:].mean(axis=0)
+            for cycle in tqdm(range(int(raw_array.shape[0]/stim_chuncks_dim)), desc='Normalization cycles'):
+                f0 = np.nanmean(raw_array[np.array(baseline_volumes)+cycle*stim_chuncks_dim,:],axis=0)
+                f0[f0==0]=0.000001
                 df_array[cycle*stim_chuncks_dim:(cycle*stim_chuncks_dim+stim_chuncks_dim),:] = raw_array[cycle*stim_chuncks_dim:(cycle*stim_chuncks_dim+stim_chuncks_dim),:]/f0
         return df_array
     
