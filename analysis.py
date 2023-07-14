@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats, optimize
 from sklearn.metrics import r2_score
+from tqdm.notebook import tqdm
 
 # Vectorized implementation of two-way ANOVA
 def anova_two_way(A, B, Y):
@@ -54,7 +55,48 @@ def anova_two_way(A, B, Y):
     pB[active_cells] = stats.f.sf(FB, DFB, DFE)
     pAB[active_cells] = stats.f.sf(FAB, DFAB, DFE)
     
+    return pA, pB, pAB, FA, FB, FAB
+
+
+def anova_two_way_permutations(A, B, Y, num_perm):
+    a,b,c, FA0, FB0, FAB0 = anova_two_way(A,B,Y) # p is dimention of cells, F only of active cells
+    num_cells = Y.shape[1]
+
+    A_levels = np.unique(A); a = len(A_levels)
+    B_levels = np.unique(B); b = len(B_levels)
+    Y4D = np.array([[Y[(A==i)&(B==j)] for j in B_levels] for i in A_levels])
+    
+    r = Y4D.shape[2]
+
+    Y = Y4D.reshape((-1, Y.shape[1]))
+    
+    # only test cells (units) that are active (gave a nonzero response to at least one stimulus) to avoid division by zero errors
+    active_cells = np.where(np.abs(Y).max(axis=0)>0)[0] 
+    Y4D = Y4D[:,:,:,active_cells]
+    Y = Y[:, active_cells]
+
+    FA0 = np.expand_dims(FA0, axis=1)
+    FB0 = np.expand_dims(FB0, axis=1)
+    FAB0 = np.expand_dims(FAB0, axis=1)
+    nperm = num_perm 
+    FA = np.nan*np.zeros((active_cells.shape[0], nperm)) #### check if is ok to take activecells along 0!!!!!!
+    FB = np.nan*np.zeros((active_cells.shape[0], nperm))
+    FAB = np.nan*np.zeros((active_cells.shape[0], nperm))
+
+    for i in tqdm(range(nperm), desc='Permutations'):
+        np.random.shuffle(Y)
+        a,b,c, FA[:,i], FB[:,i], FAB[:,i] = anova_two_way(A,B,Y)
+
+    pA = np.nan*np.zeros(num_cells)
+    pB = np.nan*np.zeros(num_cells)
+    pAB = np.nan*np.zeros(num_cells)
+
+    pA[active_cells] = np.sum(np.greater_equal(FA,FA0), axis=1)/nperm
+    pB[active_cells] = np.sum(np.greater_equal(FB,FB0), axis=1)/nperm
+    pAB[active_cells] = np.sum(np.greater_equal(FAB,FAB0), axis=1)/nperm
+
     return pA, pB, pAB
+
 
 def average_tuning_curves(Q, H):
     Qrange = np.unique(Q)
